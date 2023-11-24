@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Box, Input } from "@chakra-ui/react";
-import { Button} from "@chakra-ui/react";
+import { Button } from "@chakra-ui/react";
 import { Card, CardBody } from "@chakra-ui/react";
 import { Stack } from "@chakra-ui/react";
 import { Text } from "@chakra-ui/react";
@@ -9,6 +9,7 @@ import "./style.css";
 import toast from 'react-hot-toast';
 import Carousel from "./Carousel";
 
+// Function to query the API for fetching images based on the input text
 async function query(data) {
   const response = await fetch(
     "https://xdwvg9no7pefghrn.us-east-1.aws.endpoints.huggingface.cloud",
@@ -28,16 +29,20 @@ async function query(data) {
 }
 
 function App() {
+  // State for input fields, images, and loading indicators
   const [inputs, setInputs] = useState([
     { text: "", image: null, loading1: false, loading2: true },
   ]);
   const [generate, setGenerate] = useState(false);
+
+  // Function to handle changes in the input fields
   const handleChange = (index, event) => {
     const newInputs = [...inputs];
     newInputs[index].text = event.target.value;
     setInputs(newInputs);
   };
 
+  // Function to handle form submission (fetching image based on input)
   const handleSubmit = async (index, event) => {
     event.preventDefault();
     const newInputs = [...inputs];
@@ -53,14 +58,16 @@ function App() {
     } catch (error) {
       toast.error("Failed to fetch the image");
       console.error(error);
-      // handle error
+      // Handle error
     }
   };
 
+  // Function to set the flag for generating the comic
   const generateComic = () => {
     setGenerate(true);
   };
 
+  // Function to add new input fields
   const handleAddInput = () => {
     setInputs([
       ...inputs,
@@ -70,9 +77,12 @@ function App() {
 
   return (
     <div>
+      {/* Header */}
       <Box fontSize="2em" textAlign="center">
         Dashtoon-Assignment
       </Box>
+      
+      {/* Description */}
       <Card
         align="center"
         flexDirection="row"
@@ -89,10 +99,16 @@ function App() {
       >
         <Text>
           <b>Description</b>
-          <p>This web application is developed using <b>React.js</b> ,used <b>Chakra UI</b> for making it responsive and <b>React-hot-toast</b> to handle errors and notify them.</p>
-          <p>In this application we have to provide 10 comic prompts as input and every prompt image will be fetched from the API and then its prompt and the image will be displayed below. After fetching all the images , generate button will appear, which will display carousel of the comic.</p>
+          <p>
+            This web application is developed using <b>React.js</b>, using <b>Chakra UI</b> for responsiveness, and <b>React-hot-toast</b> for error handling and notifications.
+          </p>
+          <p>
+            Users provide 10 comic prompts as input, and images for each prompt are fetched from the API. The prompt and image are displayed below. Once all images are fetched, the 'Generate' button appears to display a carousel of the comic.
+          </p>
         </Text>
       </Card>
+      
+      {/* Input Forms */}
       <div>
         {inputs.map((input, index) => (
           <form
@@ -155,19 +171,22 @@ function App() {
             </Card>
           </form>
         ))}
+        
+        {/* Button to add more input fields */}
         <div className="add_btn">
           {inputs.length < 10 && (
             <Button
               onClick={handleAddInput}
               isDisabled={inputs.some((input) => input.loading2)}
               width="40%"
-              // backgroundColor="white"
             >
               Add Input Field
             </Button>
           )}
         </div>
       </div>
+      
+      {/* Button to generate comic */}
       {inputs.length === 10 && (
         <div className="add_btn">
           <Button onClick={generateComic} colorScheme="teal" width="40%">
@@ -175,6 +194,8 @@ function App() {
           </Button>
         </div>
       )}
+      
+      {/* Display the carousel after generating */}
       {generate &&
         <Carousel inputs={inputs}/>
       }
